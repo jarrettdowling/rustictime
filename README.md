@@ -1,4 +1,4 @@
-# RusitcTime
+# RusticTime
 RusticTime is a calendar application that is written in rust.
 
 Todo:
