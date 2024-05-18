@@ -7,13 +7,21 @@ struct Task {
     title: String,
 }
 
-fn create_db_record(conn: &Connection, task_to_add: &Task) {
-    println!("Creating new record...");
-    println!("Inserting Task: {:?}", task_to_add);
+fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
+    
+    // make a transaction from the db connection
+    let tx = conn.transaction()?;
+
+    // collect the fields from the task struct
     let id = task_to_add.id;
     let title = task_to_add.title.clone();
 
-    conn.execute("INSERT INTO tasks (id, title) values (?1, ?2)", &[&id.to_string(), &title]);
+    // send the sql command to insert the record
+    tx.execute("INSERT INTO tasks (id, title) values (?1, ?2)",
+    &[&id.to_string(), &title])?;
+
+    // commit the change
+    tx.commit()
 }
 
 fn main() -> Result<()> {
@@ -22,7 +30,7 @@ fn main() -> Result<()> {
     // let time_stamp = Utc::now().timestamp_millis();
 
     // establishing the connection to the database
-    let conn = Connection::open("rustic.db")?;
+    let mut conn = Connection::open("rustic.db")?;
 
     // create table if none exist
     conn.execute(
@@ -32,9 +40,9 @@ fn main() -> Result<()> {
         , (),)?;
 
     // Inserting test task
-    let task1 = Task{id: 10, title: "number1".to_string()};
+    let task1 = Task{id: 12, title: "number1".to_string()};
 
-    create_db_record(&conn, &task1);
+    create_db_record(&mut conn, &task1)?;
 
     // Selecting test task
     let mut statmnt = conn.prepare("SELECT id, title from tasks",)?;
