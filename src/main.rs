@@ -5,6 +5,19 @@ use rusqlite::{params, Connection, Result};
 struct Task {
     id: i64,
     title: String,
+    priority: u8,
+}
+
+impl Task {
+    fn new(title: String, priority: u8) -> Self {
+        let timestamp = Utc::now().timestamp_millis();
+
+        Self {
+            id: timestamp,
+            title: title,
+            priority: priority,
+        }
+    }
 }
 
 fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
@@ -15,10 +28,11 @@ fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
     // collect the fields from the task struct
     let id = task_to_add.id;
     let title = task_to_add.title.clone();
+    let priority = task_to_add.priority;
 
     // send the sql command to insert the record
-    tx.execute("INSERT INTO tasks (id, title) values (?1, ?2)",
-    &[&id.to_string(), &title])?;
+    tx.execute("INSERT INTO tasks (id, title, priority) values (?1, ?2, ?3)",
+    &[&id.to_string(), &title, &priority.to_string()])?;
 
     // commit the change
     tx.commit()
@@ -36,23 +50,23 @@ fn main() -> Result<()> {
     conn.execute(
         "create table if not exists tasks (
             id integer primary key,
-            title text not null)"
+            title text not null,
+            priority integer not null)"
         , (),)?;
 
     // Inserting test task
-    let task1 = Task{id: 12, title: "number1".to_string()};
-
-    create_db_record(&mut conn, &task1)?;
+    // let task1 = Task::new("Test Title 3".to_string(), 0);
+    // create_db_record(&mut conn, &task1)?;
 
     // Selecting test task
-    let mut statmnt = conn.prepare("SELECT id, title from tasks",)?;
+    let mut statmnt = conn.prepare("SELECT * from tasks WHERE priority=1",)?;
 
     let tasks = statmnt.query_map(() , |row| {
-    Ok(Task {id: row.get(0)?, title: row.get(1)?,})
+    Ok(Task {id: row.get(0)?, title: row.get(1)?, priority: row.get(2)?,})
     })?;
 
     for task in tasks {
-        println!("Found Task: {:?}", task);
+        println!("Found Task: {:?} where priority is 0", task.unwrap().id);
     }
 
     Ok(())
