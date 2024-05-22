@@ -23,6 +23,12 @@ impl Task {
     }
 }
 
+impl<Display> Task {
+    fn display(&self) {
+        println!("Task: {}, priority: {}", self.title, self.priority);
+    }
+}
+
 // Database functions ---------------------------------------------------------
 
 fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
