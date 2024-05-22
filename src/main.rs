@@ -1,6 +1,9 @@
 use chrono::{Local, Utc};
 use rusqlite::{params, Connection, Result};
 
+
+// Task Struct and methods ----------------------------------------------------
+
 #[derive(Debug)]
 struct Task {
     id: i64,
@@ -20,6 +23,8 @@ impl Task {
     }
 }
 
+// Database functions ---------------------------------------------------------
+
 fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
     
     // make a transaction from the db connection
@@ -38,10 +43,18 @@ fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
     tx.commit()
 }
 
+// Task ordering logic --------------------------------------------------------
+
+// logic to find hours until date
+
+// let a = DateTime::parse_from_str("31.5.2024 8:00 am +0000",
+            // "%d.%m.%Y %H:%M %P %z").unwrap();
+// let b: DateTime<FixedOffset> = Utc::now().into();
+// let diff = a - b;
+// println!("The difference between {} and {} is: {} hours",
+//     a, b, diff.num_hours());
+
 fn main() -> Result<()> {
-    // for use with the date part later
-    // let now = Local::now();
-    // let time_stamp = Utc::now().timestamp_millis();
 
     // establishing the connection to the database
     let mut conn = Connection::open("rustic.db")?;
