@@ -43,6 +43,27 @@ fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
     tx.commit()
 }
 
+fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
+    
+    // prepare sql statement
+    let mut stmt = conn.prepare(
+        "SELECT * from tasks WHERE priority=(?1)", priority.to_string())?;
+    
+    let tasks_iter = stmt.query_map((), |row| {
+        Ok(Task {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            priority: row.get(2)?,
+        })
+    })?;
+
+    for task in tasks {
+        println!("Found Task: {:?} where priority is 0", task.unwrap().id);
+    }
+    
+    Ok(())
+}
+
 // Task ordering logic --------------------------------------------------------
 
 // logic to find hours until date
@@ -72,15 +93,8 @@ fn main() -> Result<()> {
     // create_db_record(&mut conn, &task1)?;
 
     // Selecting test task
-    let mut statmnt = conn.prepare("SELECT * from tasks WHERE priority=1",)?;
-
-    let tasks = statmnt.query_map(() , |row| {
-    Ok(Task {id: row.get(0)?, title: row.get(1)?, priority: row.get(2)?,})
-    })?;
-
-    for task in tasks {
-        println!("Found Task: {:?} where priority is 0", task.unwrap().id);
-    }
+    let priority = 1;
+    fetch_priority_n_records(&conn, priority)?;
 
     Ok(())
 }
