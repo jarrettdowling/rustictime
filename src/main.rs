@@ -25,7 +25,7 @@ impl Task {
 
 impl<Display> Task {
     fn display(&self) {
-        println!("Task: {}, priority: {}", self.title, self.priority);
+        println!("Task: {} : {}, priority: {}", self.id, self.title, self.priority);
     }
 }
 
@@ -64,7 +64,7 @@ fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
     })?;
 
     for task in tasks {
-        println!("Found Task: {:?} where priority is 0", task.unwrap().id);
+        println!("Found Task: {}", task);
     }
     
     Ok(())
