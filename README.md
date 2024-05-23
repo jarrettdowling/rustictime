@@ -5,12 +5,12 @@ Todo:
 * Write back end
   - [ ] Implement sqlite database
       - [X] Create
-            - [ ] add dates to struct
+          - [ ] add dates to struct
       - [ ] Read / Fetch
       - [ ] Update
       - [ ] Delete
   - [ ] Implement Event sorting / prioritizing algorithm
-        - Sort by priority and due date
-        - Order tasks in a list
+      - [ ] Sort by priority and due date
+      - [ ] Order tasks in a list
 * Create front end
 * Implement CalDav
