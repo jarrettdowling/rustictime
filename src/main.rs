@@ -1,6 +1,7 @@
 use chrono::{Local, Utc};
-use rusqlite::{params, Connection, Result};
-
+use rusqlite::{Connection, Result};
+use std::fmt;
+use std::fmt::{Formatter, Display};
 
 // Task Struct and methods ----------------------------------------------------
 
@@ -23,9 +24,9 @@ impl Task {
     }
 }
 
-impl<Display> Task {
-    fn display(&self) {
-        println!("Task: {}, priority: {}", self.title, self.priority);
+impl Display for Task {
+    fn fmt (&self, f: &mut Formatter) -> fmt::Result {
+        write!(f, "({}: {}, Priority: {})", self.title, self.id, self.priority)
     }
 }
 
@@ -53,9 +54,9 @@ fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
     
     // prepare sql statement
     let mut stmt = conn.prepare(
-        "SELECT * from tasks WHERE priority=(?1)", priority.to_string())?;
+        "SELECT * from tasks WHERE priority=(?1)")?;
     
-    let tasks_iter = stmt.query_map((), |row| {
+    let tasks_iter = stmt.query_map([priority.to_string()], |row| {
         Ok(Task {
             id: row.get(0)?,
             title: row.get(1)?,
@@ -63,8 +64,8 @@ fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
         })
     })?;
 
-    for task in tasks {
-        println!("Found Task: {:?} where priority is 0", task.unwrap().id);
+    for task in tasks_iter {
+        println!("Found Task: {}", task.unwrap());
     }
     
     Ok(())
