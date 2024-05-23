@@ -1,4 +1,4 @@
-use chrono::{Local, Utc};
+use chrono::{Utc};
 use rusqlite::{Connection, Result};
 use std::fmt;
 use std::fmt::{Formatter, Display};
@@ -71,6 +71,29 @@ fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
     Ok(())
 }
 
+fn fetch_records(conn: &Connection) -> Result<Vec<Task>> {
+     
+    // prepare sql statement
+    let mut stmt = conn.prepare(
+        "SELECT * from tasks")?;
+    
+    let result = stmt.query_map((), |row| {
+        Ok(Task {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            priority: row.get(2)?,
+        })
+    })?;
+
+    let mut task_list = Vec::new();
+
+    for task in result {
+        task_list.push(task.unwrap());
+    }
+
+    Ok(task_list)
+}
+
 // Task ordering logic --------------------------------------------------------
 
 // logic to find hours until date
@@ -96,12 +119,20 @@ fn main() -> Result<()> {
         , (),)?;
 
     // Inserting test task
-    // let task1 = Task::new("Test Title 3".to_string(), 0);
+    // let task1 = Task::new("Test Task 5".to_string(), 0);
     // create_db_record(&mut conn, &task1)?;
 
     // Selecting test task
     let priority = 1;
     fetch_priority_n_records(&conn, priority)?;
 
+    let tasks_iter = fetch_records(&conn).unwrap();
+
+    println!("Fetching all records: ...");
+
+    for task in tasks_iter {
+        println!("Found Task: {}", task);
+    }
+ 
     Ok(())
 }
