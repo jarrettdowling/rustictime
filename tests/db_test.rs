@@ -12,10 +12,6 @@ fn db_read_test() -> Result<()> {
 
     let records = db::fetch_records(&conn).unwrap();
     
-    //for task in records {
-        //println!("{}", task);
-    //}
-
     assert_eq!(test_task_1.title, records.get(0).unwrap().title);
     assert_eq!(test_task_1.priority, records.get(0).unwrap().priority);
     assert_eq!(test_task_2.title, records.get(1).unwrap().title);
