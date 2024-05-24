@@ -17,8 +17,8 @@ fn main() -> Result<()> {
         , (),)?;
 
     // Inserting test task
-    // let task1 = Task::new("Test Task 5".to_string(), 0);
-    // create_db_record(&mut conn, &task1)?;
+    let task1 = task::Task::new("Test Task 0".to_string(), 0);
+    db::create_db_record(&mut conn, &task1)?;
 
     // Selecting test task
     let priority = 1;
