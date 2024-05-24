@@ -50,13 +50,13 @@ fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
     tx.commit()
 }
 
-fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
+fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<Vec<Task>> {
     
     // prepare sql statement
     let mut stmt = conn.prepare(
         "SELECT * from tasks WHERE priority=(?1)")?;
     
-    let tasks_iter = stmt.query_map([priority.to_string()], |row| {
+    let results = stmt.query_map([priority.to_string()], |row| {
         Ok(Task {
             id: row.get(0)?,
             title: row.get(1)?,
@@ -64,11 +64,13 @@ fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<()> {
         })
     })?;
 
-    for task in tasks_iter {
-        println!("Found Task: {}", task.unwrap());
+    let mut task_list: Vec<Task> = Vec::new();
+
+    for task in results {
+        task_list.push(task.unwrap());
     }
     
-    Ok(())
+    Ok(task_list)
 }
 
 fn fetch_records(conn: &Connection) -> Result<Vec<Task>> {
@@ -77,7 +79,7 @@ fn fetch_records(conn: &Connection) -> Result<Vec<Task>> {
     let mut stmt = conn.prepare(
         "SELECT * from tasks")?;
     
-    let result = stmt.query_map((), |row| {
+    let results = stmt.query_map((), |row| {
         Ok(Task {
             id: row.get(0)?,
             title: row.get(1)?,
@@ -85,9 +87,9 @@ fn fetch_records(conn: &Connection) -> Result<Vec<Task>> {
         })
     })?;
 
-    let mut task_list = Vec::new();
+    let mut task_list: Vec<Task> = Vec::new();
 
-    for task in result {
+    for task in results {
         task_list.push(task.unwrap());
     }
 
@@ -124,13 +126,19 @@ fn main() -> Result<()> {
 
     // Selecting test task
     let priority = 1;
-    fetch_priority_n_records(&conn, priority)?;
+    let records_1 = fetch_priority_n_records(&conn, priority)?;
 
-    let tasks_iter = fetch_records(&conn).unwrap();
+    println!("Fetching all priority 1 records: ...");
+
+    for task in records_1 {
+        println!("Found Task: {}", task);
+    }
+ 
+    let records = fetch_records(&conn).unwrap();
 
     println!("Fetching all records: ...");
 
-    for task in tasks_iter {
+    for task in records {
         println!("Found Task: {}", task);
     }
  
