@@ -1,0 +1,15 @@
+[package]
+name = "rustictime_api"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lib"
+path = "src/lib.rs"
+
+[dependencies]
+chrono = "0.4.38"
+
+[dependencies.rusqlite]
+version = "0.31.0"
+features = ["bundled"]
