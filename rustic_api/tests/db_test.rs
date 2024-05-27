@@ -16,7 +16,31 @@ fn basic_db_rw_test() -> Result<()> {
 
     db::create_db_record(&mut conn, &test_task)?;
 
-    let records = db::fetch_records(&conn).unwrap();
+    let records = db::fetch_all_records(&conn).unwrap();
+
+    assert_eq!(test_task.id, records.get(0).unwrap().id);
+    assert_eq!(test_task.title, records.get(0).unwrap().title);
+    assert_eq!(test_task.priority, records.get(0).unwrap().priority);
+
+    Ok(())
+}
+
+#[test]
+fn basic_id_read_test() -> Result<()> {
+    let mut conn = Connection::open_in_memory()?;
+
+    conn.execute(
+        "create table if not exists tasks (
+            id integer primary key,
+            title text not null,
+            priority integer not null)"
+        , (),)?;
+
+    let test_task = task::Task::new("Test Task 1".to_string(), 0);
+
+    db::create_db_record(&mut conn, &test_task)?;
+
+    let records = db::fetch_record_by_id(&conn, test_task.id).unwrap();
 
     assert_eq!(test_task.id, records.get(0).unwrap().id);
     assert_eq!(test_task.title, records.get(0).unwrap().title);
@@ -35,7 +59,7 @@ fn db_read_test() -> Result<()> {
     let test_task_4 = task::Task::new("Test Task 4".to_string(), 1);
     let test_task_5 = task::Task::new("Test Task 5".to_string(), 0);
 
-    let records = db::fetch_records(&conn).unwrap();
+    let records = db::fetch_all_records(&conn).unwrap();
     
     assert_eq!(test_task_1.title, records.get(0).unwrap().title);
     assert_eq!(test_task_1.priority, records.get(0).unwrap().priority);
