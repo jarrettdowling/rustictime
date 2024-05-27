@@ -22,11 +22,14 @@ pub fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()>
 }
 
 pub fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<Vec<Task>> {
+
+    let mut task_list: Vec<Task> = Vec::new();
     
     // prepare sql statement
     let mut stmt = conn.prepare(
         "SELECT * from tasks WHERE priority=(?1)")?;
-    
+
+    // send the command
     let results = stmt.query_map([priority.to_string()], |row| {
         Ok(Task {
             id: row.get(0)?,
@@ -35,8 +38,7 @@ pub fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<Vec<T
         })
     })?;
 
-    let mut task_list: Vec<Task> = Vec::new();
-
+    // unpack the results into a vector of tasks
     for task in results {
         task_list.push(task.unwrap());
     }
@@ -44,12 +46,38 @@ pub fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<Vec<T
     Ok(task_list)
 }
 
-pub fn fetch_records(conn: &Connection) -> Result<Vec<Task>> {
-     
+pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Vec<Task> {
+
+    //prepare sql statement
+    let mut stmt = conn.prepare(
+        "SELECT from tasks WHERE id=(?1)")?;
+    // send the sql command
+    let results = stmt.query_map(([id.to_string()]), |row| {
+        Ok(Task {
+            id: row.get(0)?,
+            title: row.get(1)?,
+            priority: row.get(2)?,
+        })
+    })?;
+
+    // unpack the results into vector of tasks
+    for task in results {
+        task_list.push(task.unwrap());
+    }
+
+    Ok(task_list)
+    
+}
+
+pub fn fetch_all_records(conn: &Connection) -> Result<Vec<Task>> {
+
+    let mut task_list: Vec<Task> = Vec::new();
+    
     // prepare sql statement
     let mut stmt = conn.prepare(
         "SELECT * from tasks")?;
-    
+
+    // send the sql command
     let results = stmt.query_map((), |row| {
         Ok(Task {
             id: row.get(0)?,
@@ -58,8 +86,7 @@ pub fn fetch_records(conn: &Connection) -> Result<Vec<Task>> {
         })
     })?;
 
-    let mut task_list: Vec<Task> = Vec::new();
-
+    // unpack the results into vector of tasks
     for task in results {
         task_list.push(task.unwrap());
     }
