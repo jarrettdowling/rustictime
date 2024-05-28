@@ -1,6 +1,8 @@
 use lib::{db, task};
 use rusqlite::{Connection, Result};
 
+mod common;
+
 #[test]
 fn basic_db_rw_test() -> Result<()> {
     let mut conn = Connection::open_in_memory()?;
@@ -9,10 +11,12 @@ fn basic_db_rw_test() -> Result<()> {
         "create table if not exists tasks (
             id integer primary key,
             title text not null,
-            priority integer not null)"
+            priority integer not null,
+            duedate text not null)"
         , (),)?;
 
-    let test_task = task::Task::new("Test Task 1".to_string(), 0);
+    let test_task = task::Task::new("Test Task 1".to_string(), 0,
+                                     "Fri, 14, Jul 2017 02:40:00 +0000".to_string());
 
     db::create_db_record(&mut conn, &test_task)?;
 
@@ -21,6 +25,7 @@ fn basic_db_rw_test() -> Result<()> {
     assert_eq!(test_task.id, records.get(0).unwrap().id);
     assert_eq!(test_task.title, records.get(0).unwrap().title);
     assert_eq!(test_task.priority, records.get(0).unwrap().priority);
+    assert_eq!(test_task.duedate, records.get(0).unwrap().duedate);
 
     Ok(())
 }
@@ -33,10 +38,12 @@ fn basic_id_read_test() -> Result<()> {
         "create table if not exists tasks (
             id integer primary key,
             title text not null,
-            priority integer not null)"
+            priority integer not null,
+            duedate text not null)"
         , (),)?;
 
-    let test_task = task::Task::new("Test Task 1".to_string(), 0);
+    let test_task = task::Task::new("Test Task 1".to_string(), 0,
+                                     "Fri, 14, Jul 2017 02:40:00 +0000".to_string());
 
     db::create_db_record(&mut conn, &test_task)?;
 
@@ -45,19 +52,23 @@ fn basic_id_read_test() -> Result<()> {
     assert_eq!(test_task.id, records.get(0).unwrap().id);
     assert_eq!(test_task.title, records.get(0).unwrap().title);
     assert_eq!(test_task.priority, records.get(0).unwrap().priority);
+    assert_eq!(test_task.duedate, records.get(0).unwrap().duedate);
+
 
     Ok(())
 }
 
 #[test]
 fn db_read_test() -> Result<()> {
-    let conn = Connection::open("./tests/read_records_test.db")?;
 
-    let test_task_1 = task::Task::new("Test Task 1".to_string(), 0);
-    let test_task_2 = task::Task::new("Test Task 2".to_string(), 1);
-    let test_task_3 = task::Task::new("Test Task 3".to_string(), 2);
-    let test_task_4 = task::Task::new("Test Task 4".to_string(), 1);
-    let test_task_5 = task::Task::new("Test Task 5".to_string(), 0);
+    let mut task_list: Vec<task::Task> = Vec::new();
+    let conn = common::setup_test_db(&mut task_list)?;
+
+    let test_task_1 = task_list.get(0).unwrap();
+    let test_task_2 = task_list.get(1).unwrap();
+    let test_task_3 = task_list.get(2).unwrap();
+    let test_task_4 = task_list.get(3).unwrap();
+    let test_task_5 = task_list.get(4).unwrap();
 
     let records = db::fetch_all_records(&conn).unwrap();
     
@@ -77,13 +88,14 @@ fn db_read_test() -> Result<()> {
 
 #[test]
 fn db_priority_read_test() -> Result<()> {
-    let conn = Connection::open("./tests/read_records_test.db")?;
+    let mut task_list: Vec<task::Task> = Vec::new();
+    let conn = common::setup_test_db(&mut task_list)?;
 
-    let test_task_1 = task::Task::new("Test Task 1".to_string(), 0);
-    let test_task_2 = task::Task::new("Test Task 2".to_string(), 1);
-    let test_task_3 = task::Task::new("Test Task 3".to_string(), 2);
-    let test_task_4 = task::Task::new("Test Task 4".to_string(), 1);
-    let test_task_5 = task::Task::new("Test Task 5".to_string(), 0);
+    let test_task_1 = task_list.get(0).unwrap();
+    let test_task_2 = task_list.get(1).unwrap();
+    let test_task_3 = task_list.get(2).unwrap();
+    let test_task_4 = task_list.get(3).unwrap();
+    let test_task_5 = task_list.get(4).unwrap();
 
     let records = db::fetch_priority_n_records(&conn, 0).unwrap();
     
