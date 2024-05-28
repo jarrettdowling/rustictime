@@ -9,23 +9,29 @@ pub struct Task {
     pub id: i64,
     pub title: String,
     pub priority: u8,
+    pub duedate: String,
 }
 
 impl Task {
-    pub fn new(title: String, priority: u8) -> Self {
+
+    /// Creates a new task struct as defined above with the given inputs
+    /// Requires: duedate follows the RFC2822 standard. I.e. the duedate
+    ///            string has the form "Fri, 14 Jul 2017 02:40:00 +0000"
+    pub fn new(title: String, priority: u8, duedate: String) -> Self {
         let timestamp = Utc::now().timestamp_millis();
 
         Self {
             id: timestamp,
             title: title,
             priority: priority,
+            duedate: duedate,
         }
     }
 }
 
 impl Display for Task {
     fn fmt (&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "({}: {}, Priority: {})", self.title, self.id, self.priority)
+        write!(f, "({}: {}, Priority: {}, Due: {})", self.title, self.id, self.priority, self.duedate)
     }
 }
 
