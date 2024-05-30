@@ -5,7 +5,7 @@ Todo:
 * Write back end
   - [ ] Implement sqlite database
       - [X] Create
-          - [ ] add dates to struct
+          - [X] add dates to struct
       - [ ] Read / Fetch
       - [ ] Update
       - [ ] Delete
