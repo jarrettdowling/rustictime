@@ -22,13 +22,20 @@ pub fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()>
     tx.commit()
 }
 
-pub fn fetch_priority_n_records(conn: &Connection, priority: u8) -> Result<Vec<Task>> {
+pub fn fetch_priority_n_records(conn: &Connection, priority: u8, ordered: bool) -> Result<Vec<Task>> {
 
     let mut task_list: Vec<Task> = Vec::new();
+    let mut stmt;
     
     // prepare sql statement
-    let mut stmt = conn.prepare(
-        "SELECT * from tasks WHERE priority=(?1)")?;
+    if !ordered {
+        stmt = conn.prepare(
+            "SELECT * from tasks WHERE priority=(?1)")?;
+    }
+    else {
+        stmt = conn.prepare(
+            "SELECT * from tasks WHERE priority=(?1) ORDER BY duedate")?;
+    }
 
     // send the command
     let results = stmt.query_map([priority.to_string()], |row| {

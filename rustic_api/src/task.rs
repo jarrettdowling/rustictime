@@ -47,7 +47,8 @@ impl Display for Task {
 // println!("The difference between {} and {} is: {} hours",
 //     a, b, diff.num_hours());
 
-/// orders
+/// Takes an unordered vector of tasks and orders them by priority and
+/// then by duedate.
 fn list_tasks_by_order(unordered: Vec<Task>) -> Vec<Task> {
     println!("Ordering...");
     unordered
