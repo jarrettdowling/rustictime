@@ -31,7 +31,8 @@ impl Task {
 
 impl Display for Task {
     fn fmt (&self, f: &mut Formatter) -> fmt::Result {
-        write!(f, "({}: {}, Priority: {}, Due: {})", self.title, self.id, self.priority, self.duedate)
+        write!(f, "({}: {}, Priority: {}, Due: {})",
+                self.title, self.id, self.priority, self.duedate)
     }
 }
 
@@ -45,4 +46,11 @@ impl Display for Task {
 // let diff = a - b;
 // println!("The difference between {} and {} is: {} hours",
 //     a, b, diff.num_hours());
+
+/// orders
+fn list_tasks_by_order(unordered: Vec<Task>) -> Vec<Task> {
+    println!("Ordering...");
+    unordered
+}
+
 
