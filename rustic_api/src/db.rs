@@ -61,8 +61,6 @@ pub fn fetch_priority_n_records(conn: &Connection, priority: u8, ordered: bool) 
 
 pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
 
-    let task: Task = Task::new();
-
     //prepare sql statement
     let mut stmt = conn.prepare(
         "SELECT * from tasks WHERE id=(?1)")?;
@@ -75,6 +73,8 @@ pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
             duedate: row.get(3)?,
         })
     })?;
+
+    let task: Task = results.unwrap();
 
     Ok(task)
     
