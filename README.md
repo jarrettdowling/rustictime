@@ -6,11 +6,14 @@ Todo:
   - [ ] Implement sqlite database
       - [X] Create
           - [X] add dates to struct
-      - [ ] Read / Fetch
+      - [X] Read / Fetch
       - [ ] Update
+          - [ ] add option enum to all task feilds
+          - [ ] update selected task with fields not none in given task
       - [ ] Delete
   - [ ] Implement Event sorting / prioritizing algorithm
-      - [ ] Sort by priority and due date
+      - [X] Sort by priority (done through DB)
+      - [ ] Sort by due date
       - [ ] Order tasks in a list
 * Create front end
 * Implement CalDav
