@@ -74,10 +74,9 @@ pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
         })
     })?;
 
-    let task: Task = result.next().unwrap();
+    let task: Task = result.next().unwrap().unwrap();
 
     Ok(task)
-    
 }
 
 pub fn fetch_all_records(conn: &Connection) -> Result<Vec<Task>> {
