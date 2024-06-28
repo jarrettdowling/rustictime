@@ -3,6 +3,8 @@ use crate::task::Task;
 
 // Database functions ---------------------------------------------------------
 
+// Create ---------------------------------------------------------------------
+
 pub fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()> {
     
     // make a transaction from the db connection
@@ -21,6 +23,8 @@ pub fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()>
     // commit the change
     tx.commit()
 }
+
+// Read / Fetch ---------------------------------------------------------------
 
 pub fn fetch_priority_n_records(conn: &Connection, priority: u8, ordered: bool) -> Result<Vec<Task>> {
 
@@ -55,9 +59,9 @@ pub fn fetch_priority_n_records(conn: &Connection, priority: u8, ordered: bool) 
     Ok(task_list)
 }
 
-pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Vec<Task>> {
+pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
 
-    let mut task_list: Vec<Task> = Vec::new();
+    let task: Task = Task::new();
 
     //prepare sql statement
     let mut stmt = conn.prepare(
@@ -72,12 +76,7 @@ pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Vec<Task>> {
         })
     })?;
 
-    // unpack the results into vector of tasks
-    for task in results {
-        task_list.push(task.unwrap());
-    }
-
-    Ok(task_list)
+    Ok(task)
     
 }
 
@@ -107,3 +106,11 @@ pub fn fetch_all_records(conn: &Connection) -> Result<Vec<Task>> {
     Ok(task_list)
 }
 
+// Update ---------------------------------------------------------------------
+
+pub fn update_record(conn: &mut Connection, id: i64) -> Result<()> {
+    let mut task: Task = fetch_record_by_id(conn, id).unwrap();
+    println!("Updating Task ...");
+
+    Ok()
+}
