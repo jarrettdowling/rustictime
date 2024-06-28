@@ -65,7 +65,7 @@ pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
     let mut stmt = conn.prepare(
         "SELECT * from tasks WHERE id=(?1)")?;
     // send the sql command
-    let result = stmt.query_map([id.to_string()], |row| {
+    let mut result = stmt.query_map([id.to_string()], |row| {
         Ok(Task {
             id: row.get(0)?,
             title: row.get(1)?,
