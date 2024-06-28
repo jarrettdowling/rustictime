@@ -74,7 +74,7 @@ pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
         })
     })?;
 
-    let task: Task = results.next().unwrap();
+    let task: Task = result.next().unwrap();
 
     Ok(task)
     
