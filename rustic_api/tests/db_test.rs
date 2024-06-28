@@ -47,12 +47,12 @@ fn basic_id_read_test() -> Result<()> {
 
     db::create_db_record(&mut conn, &test_task)?;
 
-    let records = db::fetch_record_by_id(&conn, test_task.id).unwrap();
+    let record = db::fetch_record_by_id(&conn, test_task.id).unwrap();
 
-    assert_eq!(test_task.id, records.get(0).unwrap().id);
-    assert_eq!(test_task.title, records.get(0).unwrap().title);
-    assert_eq!(test_task.priority, records.get(0).unwrap().priority);
-    assert_eq!(test_task.duedate, records.get(0).unwrap().duedate);
+    assert_eq!(test_task.id, record.id);
+    assert_eq!(test_task.title, record.title);
+    assert_eq!(test_task.priority, record.priority);
+    assert_eq!(test_task.duedate, record.duedate);
 
 
     Ok(())
