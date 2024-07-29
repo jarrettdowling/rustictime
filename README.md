@@ -16,4 +16,6 @@ Todo:
       - [ ] Sort by due date
       - [ ] Order tasks in a list
 * Create front end
+  - [ ] TUI / CLI
+  - [ ] GUI / Web
 * Implement CalDav
