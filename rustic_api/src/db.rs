@@ -11,14 +11,16 @@ pub fn create_db_record(conn: &mut Connection, task_to_add: &Task) -> Result<()>
     let tx = conn.transaction()?;
 
     // collect the fields from the task struct
-    let id = task_to_add.id;
+    let id = task_to_add.id.to_string();
     let title = task_to_add.title.clone();
-    let priority = task_to_add.priority;
+    let priority = task_to_add.priority.to_string();
+    let parts = task_to_add.parts.to_string();
     let duedate = task_to_add.duedate.clone();
+    let description = task_to_add.description.clone();
 
     // send the sql command to insert the record
-    tx.execute("INSERT INTO tasks (id, title, priority, duedate) values (?1, ?2, ?3, ?4)",
-    &[&id.to_string(), &title, &priority.to_string(), &duedate])?;
+    tx.execute("INSERT INTO tasks (id, title, priority, parts, duedate, description) values (?1, ?2, ?3, ?4, ?5, ?6)",
+    &[&id, &title, &priority, &parts, &duedate, &description])?;
 
     // commit the change
     tx.commit()
@@ -47,7 +49,9 @@ pub fn fetch_priority_n_records(conn: &Connection, priority: u8, ordered: bool) 
             id: row.get(0)?,
             title: row.get(1)?,
             priority: row.get(2)?,
-            duedate: row.get(3)?,
+            parts: row.get(3)?,
+            duedate: row.get(4)?,
+            description: row.get(5)?,
         })
     })?;
 
@@ -70,7 +74,9 @@ pub fn fetch_record_by_id(conn: &Connection, id: i64) -> Result<Task> {
             id: row.get(0)?,
             title: row.get(1)?,
             priority: row.get(2)?,
-            duedate: row.get(3)?,
+            parts: row.get(3)?,
+            duedate: row.get(4)?,
+            description: row.get(5)?,
         })
     })?;
 
@@ -93,7 +99,9 @@ pub fn fetch_all_records(conn: &Connection) -> Result<Vec<Task>> {
             id: row.get(0)?,
             title: row.get(1)?,
             priority: row.get(2)?,
-            duedate: row.get(3)?,
+            parts: row.get(3)?,
+            duedate: row.get(4)?,
+            description: row.get(5)?,
         })
     })?;
 
