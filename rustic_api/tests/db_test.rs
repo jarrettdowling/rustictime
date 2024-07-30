@@ -12,11 +12,14 @@ fn basic_db_rw_test() -> Result<()> {
             id integer primary key,
             title text not null,
             priority integer not null,
-            duedate text not null)"
+            parts integer not null,
+            duedate text not null,
+            description text)"
         , (),)?;
 
-    let test_task = task::Task::new("Test Task 1".to_string(), 0,
-                                     "Fri, 14, Jul 2017 02:40:00 +0000".to_string());
+    let test_task = task::Task::new("Test Task 1".to_string(), 0, 1,
+                                     "Fri, 14, Jul 2017 02:40:00 +0000".to_string(),
+                                     "".to_string());
 
     db::create_db_record(&mut conn, &test_task)?;
 
@@ -25,7 +28,9 @@ fn basic_db_rw_test() -> Result<()> {
     assert_eq!(test_task.id, records.get(0).unwrap().id);
     assert_eq!(test_task.title, records.get(0).unwrap().title);
     assert_eq!(test_task.priority, records.get(0).unwrap().priority);
+    assert_eq!(test_task.parts, records.get(0).unwrap().parts);
     assert_eq!(test_task.duedate, records.get(0).unwrap().duedate);
+    assert_eq!(test_task.description, records.get(0).unwrap().description);
 
     Ok(())
 }
@@ -39,11 +44,14 @@ fn basic_id_read_test() -> Result<()> {
             id integer primary key,
             title text not null,
             priority integer not null,
-            duedate text not null)"
+            parts integer not null,
+            duedate text not null,
+            description text)"
         , (),)?;
 
-    let test_task = task::Task::new("Test Task 1".to_string(), 0,
-                                     "Fri, 14, Jul 2017 02:40:00 +0000".to_string());
+    let test_task = task::Task::new("Test Task 1".to_string(), 0, 1,
+                                     "Fri, 14, Jul 2017 02:40:00 +0000".to_string(),
+                                     "".to_string());
 
     db::create_db_record(&mut conn, &test_task)?;
 
@@ -52,8 +60,9 @@ fn basic_id_read_test() -> Result<()> {
     assert_eq!(test_task.id, record.id);
     assert_eq!(test_task.title, record.title);
     assert_eq!(test_task.priority, record.priority);
+    assert_eq!(test_task.parts, record.parts);
     assert_eq!(test_task.duedate, record.duedate);
-
+    assert_eq!(test_task.description, record.description);
 
     Ok(())
 }
